@@ -9,6 +9,10 @@ class SessionsPerTrack extends ChartWidget
 {
     protected ?string $heading = 'Sessions per track';
 
+    // ChartWidget polls every 5s by default; an open dashboard tab would
+    // ping the preview indefinitely. The data only changes on admin edits.
+    protected ?string $pollingInterval = null;
+
     protected function getData(): array
     {
         $tracks = Track::query()

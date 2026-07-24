@@ -1,3 +1,14 @@
+# Harbor Conf 2026 — Tugboat demo app
+
+Demo credentials for the Filament admin panel at `/admin`:
+
+- **Email**: `admin@example.com`
+- **Password**: `password`
+
+The same login works locally (`https://laravel-demo.ddev.site/admin`) and on every Tugboat preview — the user is seeded by `DemoSeeder` and survives reseeds.
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

@@ -2,7 +2,7 @@
 # demo-specific departures:
 #
 #   1. Seeding happens in `update`, never in `build`. PR previews clone the
-#      base preview's database, which is what makes them fast — and gives two
+#      base preview's database, which is what makes them fast -- and gives two
 #      previews byte-identical data by construction.
 #   2. The `urls` list drives screenshots, visual diff, and Lighthouse
 #      together. The four pages are chosen because each fails differently.
@@ -44,7 +44,7 @@ services:
         - chmod +x /etc/service/webserver/run
 
       # Runs on the base preview (and on refresh). The only place seeding
-      # happens — PR previews inherit this database by cloning.
+      # happens -- PR previews inherit this database by cloning.
       update:
         - composer install --optimize-autoloader
         - php artisan config:cache
@@ -53,8 +53,8 @@ services:
         - npm run build
 
       # Runs on every PR preview after cloning the base. Migrates, never
-      # seeds. This phase is the watchable part of the live build — keep it
-      # in the 60–120 second window.
+      # seeds. This phase is the watchable part of the live build -- keep it
+      # in the 60-120 second window.
       build:
         - composer install --optimize-autoloader
         - php artisan config:cache
@@ -66,7 +66,7 @@ services:
     # Each page fails differently: the schedule is where the rebrand and the
     # isolation-beat edit land; the speaker grid is where two open PRs
     # collide; the two detail pages are the longest name and the missing
-    # headshot — the layout's fragile spots.
+    # headshot -- the layout's fragile spots.
     urls:
       - /schedule
       - /speakers

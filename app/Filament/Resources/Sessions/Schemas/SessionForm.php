@@ -19,6 +19,7 @@ class SessionForm
                 TextInput::make('slug')
                     ->required(),
                 Textarea::make('abstract')
+                    ->required()
                     ->rows(5)
                     ->columnSpanFull(),
                 Select::make('speaker_id')

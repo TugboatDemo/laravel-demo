@@ -11,13 +11,15 @@ The same login works locally (`https://laravel-demo.ddev.site/admin`) and on eve
 
 Five branches, each a single PR-sized commit on top of `main`, kept rebased so their diffs stay clean. Push them and open PRs to stage the demo — the plurality is the point: several live previews at once is what one shared staging server can't do.
 
-| Branch | Where to QA | What to look for |
-|---|---|---|
-| `demo/speaker-company` | `/speakers` | Every card gains an accent-colored company line; the grid reflows. In `/admin` → Speakers → Edit, the Company field now sits above Bio. Visual diff fires on `/speakers` only |
-| `demo/session-status-column` | `/admin` → Sessions | New Status badge column, all "Confirmed". Public pages are untouched — the visual diff stays clean. That's the point: a schema change you can safely merge without opening staging |
-| `demo/rebrand-accent` | Any public page | Teal accents (top bar, brand mark, nav underline, links, footer) turn violet. Visual diff fires on all four screenshot URLs. Also the "let them drive" edit — change the hex in the GitHub web UI live on a call |
-| `demo/require-abstract` | `/admin` → Sessions → Edit | Abstract is now marked required; clearing it and saving shows a validation error. No public change, visual diff stays clean |
-| `demo/broken` | `/speakers` | **Never merge.** Oversized headshots; María Fernanda's un-truncated name wrecks the grid at side-by-side width (visual diff catches it) and the missing alt text drops the Lighthouse accessibility score vs. base. Edits the same speaker card as `demo/speaker-company` — on shared staging, nobody could tell which PR broke the layout |
+| Branch | Where to QA | What to look for | Local checkout only: run first |
+|---|---|---|---|
+| `demo/speaker-company` | `/speakers` | Every card gains an accent-colored company line; the grid reflows. In `/admin` → Speakers → Edit, the Company field now sits above Bio. Visual diff fires on `/speakers` only | — |
+| `demo/session-status-column` | `/admin` → Sessions | New Status badge column, all "Confirmed". Public pages are untouched — the visual diff stays clean. That's the point: a schema change you can safely merge without opening staging | `ddev artisan migrate` |
+| `demo/rebrand-accent` | Any public page | Teal accents (top bar, brand mark, nav underline, links, footer) turn violet. Visual diff fires on all four screenshot URLs. Also the "let them drive" edit — change the hex in the GitHub web UI live on a call | `ddev npm run build` |
+| `demo/require-abstract` | `/admin` → Sessions → Edit | Abstract is now marked required; clearing it and saving shows a validation error. No public change, visual diff stays clean | — |
+| `demo/broken` | `/speakers` | **Never merge.** Oversized headshots; María Fernanda's un-truncated name wrecks the grid at side-by-side width (visual diff catches it) and the missing alt text drops the Lighthouse accessibility score vs. base. Edits the same speaker card as `demo/speaker-company` — on shared staging, nobody could tell which PR broke the layout | `ddev npm run build` |
+
+The last column applies **only to a local DDEV checkout** — Tugboat previews never need it, because every preview build runs the full pipeline (`composer install`, `migrate --force`, `npm ci && npm run build`) on a fresh clone. If a Blade change seems invisible after switching branches locally, run `ddev artisan view:clear`.
 
 ### Operating notes
 

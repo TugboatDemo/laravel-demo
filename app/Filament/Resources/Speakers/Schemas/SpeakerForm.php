@@ -18,12 +18,12 @@ class SpeakerForm
                     ->required(),
                 TextInput::make('title')
                     ->required(),
+                TextInput::make('company')
+                    ->required(),
                 Textarea::make('bio')
                     ->required()
                     ->rows(4)
                     ->columnSpanFull(),
-                TextInput::make('company')
-                    ->required(),
                 TextInput::make('headshot_path')
                     ->default(null),
             ]);

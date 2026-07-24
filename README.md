@@ -7,6 +7,27 @@ Demo credentials for the Filament admin panel at `/admin`:
 
 The same login works locally (`https://laravel-demo.ddev.site/admin`) and on every Tugboat preview — the user is seeded by `DemoSeeder` and survives reseeds.
 
+## Demo branches
+
+Five branches, each a single PR-sized commit on top of `main`, kept rebased so their diffs stay clean. Push them and open PRs to stage the demo — the plurality is the point: several live previews at once is what one shared staging server can't do.
+
+| Branch | Change | What it demonstrates |
+|---|---|---|
+| `demo/speaker-company` | Company line on public speaker cards; company field moved above bio in the admin form | A visible reflow of the speaker grid. Touches `partials/speaker-card.blade.php` — the collision pair with `demo/broken` |
+| `demo/session-status-column` | Status column + badge in the admin sessions table (with migration) | The contrast case: builds green, zero visual diff on public pages |
+| `demo/rebrand-accent` | One hex value (`--color-accent`) in `resources/css/app.css` | Ripples through every public page. Also the "let them drive" edit — change the hex in the GitHub web UI live on a call |
+| `demo/require-abstract` | Abstract required in the admin session form | A small honest admin-side change: asterisk + validation |
+| `demo/broken` | Bigger headshots that silently drop alt text and name truncation | **Never merge.** Lighthouse flags the accessibility drop vs. base; the long-name speaker wrecks the grid at side-by-side width, caught by visual diff. Also touches `speaker-card.blade.php` — on shared staging, nobody could tell whether this or `demo/speaker-company` broke the layout |
+
+### Operating notes
+
+- Stage the demo: `git push origin demo/speaker-company demo/session-status-column demo/rebrand-accent demo/require-abstract demo/broken`, then open a PR for each against `main`. Leave them all open; `demo/broken` stays open forever.
+- The branches are rebased onto `main` whenever it changes — after that, pushing them again requires `--force-with-lease`.
+- **Refreshing the base preview reseeds the database** (`update` phase runs `migrate --seed`), resetting any admin edits to the canonical demo state. Do this before each demo session.
+- PR previews clone the base preview's database and run only the `build` phase — they never reseed. That clone is both the build speed and the database isolation being sold.
+- Previews sleep after 15 idle minutes and wake with a brief 503 — hit each preview once before demoing so the first visitor click is instant.
+- Side-by-side means roughly 800–960px per window; the layout is built to hold two columns there at up to 150% browser zoom.
+
 ---
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>

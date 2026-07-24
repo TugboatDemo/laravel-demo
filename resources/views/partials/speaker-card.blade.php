@@ -15,6 +15,7 @@
         <span class="min-w-0">
             <span class="block truncate font-semibold text-slate-900">{{ $speaker->name }}</span>
             <span class="block truncate text-sm text-slate-600">{{ $speaker->title }}</span>
+            <span class="block truncate text-sm font-medium text-accent">{{ $speaker->company }}</span>
         </span>
     </a>
 </article>

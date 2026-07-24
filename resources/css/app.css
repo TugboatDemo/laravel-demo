@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Brand accent. The only place the accent color is defined — change it here
+       and every accent-* utility follows. */
+    --color-accent: #0d9488;
+
+    /* Card grids switch columns here instead of at sm (640px). The demo runs
+       in a half-screen window of roughly 800–960px at up to 150% browser zoom
+       (800 / 1.5 = 533px effective), and the layout must not reflow anywhere
+       in that range. */
+    --breakpoint-cards: 520px;
+}
+
+/* Screenshots must never catch a mid-flight state. */
+*,
+*::before,
+*::after {
+    transition: none !important;
+    animation: none !important;
+}

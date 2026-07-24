@@ -1,0 +1,77 @@
+# Tugboat preview config, following the Laravel starter config with two
+# demo-specific departures:
+#
+#   1. Seeding happens in `update`, never in `build`. PR previews clone the
+#      base preview's database, which is what makes them fast — and gives two
+#      previews byte-identical data by construction.
+#   2. The `urls` list drives screenshots, visual diff, and Lighthouse
+#      together. The four pages are chosen because each fails differently.
+#
+# Config caching is fine; data caching is not. Session and cache drivers are
+# both `database`, so both are cloned per preview.
+services:
+  webserver:
+    image: tugboatqa/php:8.3-apache
+    default: true
+    depends: database
+
+    commands:
+      init:
+        - docker-php-ext-install opcache
+        - php -m | grep -qi '^intl$' || (apt-get update && apt-get install -yq libicu-dev && docker-php-ext-install intl)
+        - a2enmod headers rewrite
+
+        # Node 22, matching local DDEV.
+        - apt-get update
+        - apt-get install -yq ca-certificates curl gnupg
+        - mkdir -p /etc/apt/keyrings
+        - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+        - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+        - apt-get update
+        - apt-get install -yq nodejs
+
+        - cp "${TUGBOAT_ROOT}/.tugboat/.env.tugboat" "${TUGBOAT_ROOT}/.env"
+        - ln -snf "${TUGBOAT_ROOT}/public" "${DOCROOT}"
+        - chgrp -R www-data "${TUGBOAT_ROOT}/storage"
+        - find "${TUGBOAT_ROOT}/storage" -type d -exec chmod 2775 {} \;
+        - find "${TUGBOAT_ROOT}/storage" -type f -exec chmod 0664 {} \;
+        - composer install --optimize-autoloader
+        - php artisan key:generate
+
+        # Queue worker for the database queue.
+        - mkdir -p /etc/service/webserver
+        - cp "${TUGBOAT_ROOT}/.tugboat/etc/service/webserver/run" /etc/service/webserver/run
+        - chmod +x /etc/service/webserver/run
+
+      # Runs on the base preview (and on refresh). The only place seeding
+      # happens — PR previews inherit this database by cloning.
+      update:
+        - composer install --optimize-autoloader
+        - php artisan config:cache
+        - php artisan migrate --seed --force
+        - npm ci
+        - npm run build
+
+      # Runs on every PR preview after cloning the base. Migrates, never
+      # seeds. This phase is the watchable part of the live build — keep it
+      # in the 60–120 second window.
+      build:
+        - composer install --optimize-autoloader
+        - php artisan config:cache
+        - php artisan migrate --force
+        - npm ci
+        - npm run build
+
+    # Screenshots, visual diffs, and Lighthouse all come from this list.
+    # Each page fails differently: the schedule is where the rebrand and the
+    # isolation-beat edit land; the speaker grid is where two open PRs
+    # collide; the two detail pages are the longest name and the missing
+    # headshot — the layout's fragile spots.
+    urls:
+      - /schedule
+      - /speakers
+      - /speakers/maria-fernanda-gutierrez-de-la-torre-albarracin
+      - /speakers/priya-raghunathan
+
+  database:
+    image: tugboatqa/mariadb:10.5

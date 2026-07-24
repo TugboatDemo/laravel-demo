@@ -11,13 +11,13 @@ The same login works locally (`https://laravel-demo.ddev.site/admin`) and on eve
 
 Five branches, each a single PR-sized commit on top of `main`, kept rebased so their diffs stay clean. Push them and open PRs to stage the demo — the plurality is the point: several live previews at once is what one shared staging server can't do.
 
-| Branch | Change | What it demonstrates |
+| Branch | Where to QA | What to look for |
 |---|---|---|
-| `demo/speaker-company` | Company line on public speaker cards; company field moved above bio in the admin form | A visible reflow of the speaker grid. Touches `partials/speaker-card.blade.php` — the collision pair with `demo/broken` |
-| `demo/session-status-column` | Status column + badge in the admin sessions table (with migration) | The contrast case: builds green, zero visual diff on public pages |
-| `demo/rebrand-accent` | One hex value (`--color-accent`) in `resources/css/app.css` | Ripples through every public page. Also the "let them drive" edit — change the hex in the GitHub web UI live on a call |
-| `demo/require-abstract` | Abstract required in the admin session form | A small honest admin-side change: asterisk + validation |
-| `demo/broken` | Bigger headshots that silently drop alt text and name truncation | **Never merge.** Lighthouse flags the accessibility drop vs. base; the long-name speaker wrecks the grid at side-by-side width, caught by visual diff. Also touches `speaker-card.blade.php` — on shared staging, nobody could tell whether this or `demo/speaker-company` broke the layout |
+| `demo/speaker-company` | `/speakers` | Every card gains an accent-colored company line; the grid reflows. In `/admin` → Speakers → Edit, the Company field now sits above Bio. Visual diff fires on `/speakers` only |
+| `demo/session-status-column` | `/admin` → Sessions | New Status badge column, all "Confirmed". Public pages are untouched — the visual diff stays clean. That's the point: a schema change you can safely merge without opening staging |
+| `demo/rebrand-accent` | Any public page | Teal accents (top bar, brand mark, nav underline, links, footer) turn violet. Visual diff fires on all four screenshot URLs. Also the "let them drive" edit — change the hex in the GitHub web UI live on a call |
+| `demo/require-abstract` | `/admin` → Sessions → Edit | Abstract is now marked required; clearing it and saving shows a validation error. No public change, visual diff stays clean |
+| `demo/broken` | `/speakers` | **Never merge.** Oversized headshots; María Fernanda's un-truncated name wrecks the grid at side-by-side width (visual diff catches it) and the missing alt text drops the Lighthouse accessibility score vs. base. Edits the same speaker card as `demo/speaker-company` — on shared staging, nobody could tell which PR broke the layout |
 
 ### Operating notes
 

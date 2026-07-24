@@ -19,6 +19,9 @@ services:
       init:
         - docker-php-ext-install opcache
         - php -m | grep -qi '^intl$' || (apt-get update && apt-get install -yq libicu-dev && docker-php-ext-install intl)
+        # openspout (a Filament dependency) requires ext-zip, which the
+        # tugboatqa php images do not ship.
+        - php -m | grep -qi '^zip$' || (apt-get update && apt-get install -yq libzip-dev && docker-php-ext-install zip)
         - a2enmod headers rewrite
 
         # Node 22, matching local DDEV.

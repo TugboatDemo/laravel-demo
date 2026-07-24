@@ -31,6 +31,14 @@ class SessionsTable
                     ->sortable(),
                 TextColumn::make('level')
                     ->badge(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'confirmed' => 'success',
+                        'tentative' => 'warning',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    }),
             ])
             ->filters([
                 SelectFilter::make('track')

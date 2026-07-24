@@ -11,7 +11,7 @@
 
     /* Brand accent. The only place the accent color is defined — change it here
        and every accent-* utility follows. */
-    --color-accent: #0d9488;
+    --color-accent: #7c3aed;
 
     /* Card grids switch columns here instead of at sm (640px). The demo runs
        in a half-screen window of roughly 800–960px at up to 150% browser zoom
